@@ -6,11 +6,32 @@
         </div>
         <div class="logo">博客园</div>
         <div class="header-midder">
-            <el-input placeholder="请输入内容" v-model="text.content" class="input-with-select" style="width:500px" >
+            <el-input placeholder="请输入内容" v-model="text.content" @focus="search" @blur="blur" class="input-with-select" style="width:500px" >
                 <template #append>
                     <el-button icon="el-icon-search"></el-button>
                 </template>
             </el-input>
+            <el-card  style="position:relative;z-index:8" class="box-card">
+                <el-row :gutter="12">
+                    <el-col :span="12">
+                        <el-card shadow="never" class="box-card">
+                            <template #header class="clearfix">
+                                <span>热门搜索</span>
+                            </template>
+                            <div v-for="item in searchList" :key="item.keyWord" class="text item">
+                                {{item.keyWord}}
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-card shadow="never" class="box-card">
+                            <template #header class="clearfix">
+                                <span>历史搜索</span>
+                            </template>
+                        </el-card>
+                    </el-col>
+                </el-row>
+            </el-card>
         </div>
         <div class="header-right">
             <div v-if="!userId">
@@ -39,19 +60,46 @@
             </div>
         </div>
     </div>
+    <div class="recommend" v-if="editVisible">
+        <el-card class="box-card">
+            <template #header class="clearfix">
+                <span>热门博客榜单</span>
+            </template>
+            <div v-for="blog in blogRecommendList" :key="blog.id" class="text item">
+                {{blog.blogTitle}}
+            </div>
+        </el-card>
+        <el-card class="box-card">
+            <template #header class="clearfix">
+                <span>热门博主榜单</span>
+            </template>
+            <div v-for="user in userRecommendList" :key="user.id" class="text item">
+                {{ user.blogUserName }}
+            </div>
+        </el-card>
+    </div>
 </template>
 <script>
-import { computed, onMounted, reactive } from "vue";
+import { computed, onMounted, reactive,ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { getAccount } from "../api/index";
+import { getAccount,getHomeRecommendList,getHomeUserRecommendList,getHomeSearchList } from "../api/index";
 import { ElMessage } from 'element-plus';
 export default {
     setup() {
         const router = useRouter();
         const userId = localStorage.getItem("user_id");
         const message = 2;
-        
+        const  isSearch = ref(false);
+        // const search = reactive({
+        //     focus:''
+        // });
+        const search = ()=>{
+            isSearch.value = true;
+        };
+        const blur = ()=>{
+            isSearch.value = false;
+        };
         let userInfo = reactive({
             id:"",
             account: "",
@@ -72,9 +120,44 @@ export default {
         let idData = reactive({
             id:"",
         });
-
+        const editVisible = ref(false);
+        const getEdit = ()=>{
+            if(router.currentRoute.value.name == 'dashboard'){
+                editVisible.value = true;
+                getBlogRecommend();
+            }
+        } 
+        const blogRecommendList = ref([]);
+        const userRecommendList = ref([]);
+        const getBlogRecommend = ()=>{
+            getHomeRecommendList().then((res)=>{
+                if (res.errorCode == 200) { 
+                blogRecommendList.value = res.data;
+            } else {
+                ElMessage.warning(res.message);
+            }
+            });
+            getHomeUserRecommendList().then((res)=>{
+                if (res.errorCode == 200) { 
+                userRecommendList.value = res.data;
+            } else {
+                ElMessage.warning(res.message);
+            }
+            });
+        };
+        const searchList = ref([]);
+        //const userSearchList = ref([]);
+        const getSearchList = ()=>{
+            getHomeSearchList().then((res)=>{
+                if(res.errorCode == 200){
+                    searchList.value = res.data;
+                }else{
+                    ElMessage.warning(res.message);
+                }
+                
+            });
+        };
         const getUser = ()=>{
-            console.log(userId);
             if(userId != null){
                 idData.id = userId;
                 getAccount(idData).then((res)=>{
@@ -86,8 +169,11 @@ export default {
                     }
                 });
             }
+            console.log(router.currentRoute.value.name);
         };
         getUser();
+        getEdit();
+        getSearchList();
         // 用户名下拉菜单选择事件
         
         const handleCommand = (command) => {
@@ -106,10 +192,20 @@ export default {
             userId,
             message,
             collapse,
+            blogRecommendList,
+            userRecommendList,
+            editVisible,
+            isSearch,
+            searchList,
+            getSearchList,
+            blur,
+            search,
             getUser,
             collapseChage,
             handleCommand,
-            toLogin
+            toLogin,
+            getBlogRecommend,
+            getEdit
         };
     },
 };
@@ -123,6 +219,11 @@ export default {
     font-size: 22px;
     color: #303133;
     background-color: #f2f6fc;
+}
+.recommend{
+    width: 300px;
+    position: absolute;
+    right: 21%;
 }
 .collapse-btn {
     float: left;
@@ -200,4 +301,24 @@ export default {
     line-height: 70px;
     font-size: 14px;
 }
+.text {
+    font-size: 14px;
+  }
+
+  .item {
+    margin-bottom: 18px;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  /* .box-card {
+    width: 480px;
+  } */
 </style>

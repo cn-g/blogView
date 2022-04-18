@@ -39,6 +39,38 @@ export const getHomeChannel = query => {
         params: query
     });
 };
+//前台获取类目列表
+export const getHomeCategory = query => {
+    return request({
+        url: '/web-reception/home/getCategory',
+        method: 'get',
+        params: query
+    });
+};
+//前台获取热门博客榜单
+export const getHomeRecommendList = query => {
+    return request({
+        url: '/web-reception/home/getRecommendList',
+        method: 'get',
+        params: query
+    });
+};
+//前台获取热门博主榜单
+export const getHomeUserRecommendList = query => {
+    return request({
+        url: '/web-reception/home/getUserRecommendList',
+        method: 'get',
+        params: query
+    });
+};
+//前台获取热门搜索
+export const getHomeSearchList = query => {
+    return request({
+        url: '/web-reception/home/getSearchList',
+        method: 'get',
+        params: query
+    });
+};
 //账号
 export const getAccountPage = query => {
     return request({
