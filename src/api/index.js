@@ -71,6 +71,23 @@ export const getHomeSearchList = query => {
         params: query
     });
 };
+//前台获取历史搜索记录
+export const getHomeHistoryList = query => {
+    return request({
+        url: '/web-reception/user/getHistoryList',
+        method: 'get',
+        params: query
+    });
+};
+//前台情况历史记录
+export const cleanHistory = data => {
+    return request({
+        url: '/web-reception/user/cleanHistory',
+        method: 'post',
+        data: data
+    });
+};
+
 //账号
 export const getAccountPage = query => {
     return request({

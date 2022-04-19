@@ -5,29 +5,34 @@
             <i class="el-icon-tickets"></i>
         </div>
         <div class="logo">博客园</div>
-        <div class="header-midder">
-            <el-input placeholder="请输入内容" v-model="text.content" @focus="search" @blur="blur" class="input-with-select" style="width:500px" >
+        <div class="header-midder" >
+            <el-input placeholder="请输入内容"  @focus="search" @blur="blur" v-model="text.content" class="input-with-select" style="width:500px" >
                 <template #append>
                     <el-button icon="el-icon-search"></el-button>
                 </template>
             </el-input>
-            <el-card  style="position:relative;z-index:8" class="box-card">
+            <el-card v-if="isSearch" style="position:relative;z-index:8;line-height: normal;
+                            font-size: initial;" class="box-card">
                 <el-row :gutter="12">
-                    <el-col :span="12">
-                        <el-card shadow="never" class="box-card">
+                    <el-col :span="showHistory==true?12:24">
+                        <el-card shadow="never" class="box-card" >
                             <template #header class="clearfix">
                                 <span>热门搜索</span>
                             </template>
-                            <div v-for="item in searchList" :key="item.keyWord" class="text item">
+                            <div v-for="item in searchList" :key="item.keyWord" class="text item" @click="addKeyWord(item.keyWord)" style="cursor: pointer;">
                                 {{item.keyWord}}
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="12" v-if="showHistory">
                         <el-card shadow="never" class="box-card">
                             <template #header class="clearfix">
                                 <span>历史搜索</span>
                             </template>
+                            <div v-for="item in userSearchList" :key="item.keyWord" class="text item" @click="addKeyWord(item.keyWord)" style="cursor: pointer;">
+                                {{item.keyWord}}
+                            </div>
+                            <el-button type="text" @click="cleanSearch">清空历史记录<i class="el-icon-delete-solid"></i></el-button>
                         </el-card>
                     </el-col>
                 </el-row>
@@ -83,17 +88,17 @@
 import { computed, onMounted, reactive,ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { getAccount,getHomeRecommendList,getHomeUserRecommendList,getHomeSearchList } from "../api/index";
+import { getAccount,getHomeRecommendList,getHomeUserRecommendList,getHomeSearchList,getHomeHistoryList,cleanHistory } from "../api/index";
 import { ElMessage } from 'element-plus';
 export default {
     setup() {
         const router = useRouter();
         const userId = localStorage.getItem("user_id");
         const message = 2;
+        //是否展示搜索下拉
         const  isSearch = ref(false);
-        // const search = reactive({
-        //     focus:''
-        // });
+        //是否展示历史搜索
+        const showHistory = ref(userId != null?true:false);
         const search = ()=>{
             isSearch.value = true;
         };
@@ -134,28 +139,36 @@ export default {
                 if (res.errorCode == 200) { 
                 blogRecommendList.value = res.data;
             } else {
-                ElMessage.warning(res.message);
+                //ElMessage.warning(res.message);
             }
             });
             getHomeUserRecommendList().then((res)=>{
                 if (res.errorCode == 200) { 
                 userRecommendList.value = res.data;
             } else {
-                ElMessage.warning(res.message);
+                //ElMessage.warning(res.message);
             }
             });
         };
         const searchList = ref([]);
-        //const userSearchList = ref([]);
+        const userSearchList = ref([]);
         const getSearchList = ()=>{
             getHomeSearchList().then((res)=>{
                 if(res.errorCode == 200){
                     searchList.value = res.data;
                 }else{
-                    ElMessage.warning(res.message);
+                    //ElMessage.warning(res.message);
                 }
-                
             });
+            if(userId != null){
+                getHomeHistoryList().then((res)=>{
+                    if(res.errorCode == 200){
+                        userSearchList.value = res.data;
+                    }else{
+                        showHistory.value = false;
+                    }
+                });
+            }
         };
         const getUser = ()=>{
             if(userId != null){
@@ -165,11 +178,20 @@ export default {
                         userInfo.account = res.data.account;
                         userInfo.picUrl = res.data.picUrl;
                     }else{
-                        ElMessage.warning("获取用户信息失败");
+                        //ElMessage.warning("获取用户信息失败");
                     }
                 });
             }
-            console.log(router.currentRoute.value.name);
+        };
+        const cleanSearch = ()=>{
+            cleanHistory().then((res)=>{
+                if(res.errorCode == 200){
+                    showHistory.value = false;
+                }
+            });
+        };
+        const addKeyWord = (keyWord)=>{
+            text.content = keyWord;
         };
         getUser();
         getEdit();
@@ -180,6 +202,7 @@ export default {
             if (command == "loginout") {
                 localStorage.removeItem("token");
                 localStorage.removeItem("role_id");
+                localStorage.removeItem("user_id");
                 router.push("/login");
             } else if (command == "user") {
                 router.push("/user");
@@ -197,6 +220,8 @@ export default {
             editVisible,
             isSearch,
             searchList,
+            userSearchList,
+            showHistory,
             getSearchList,
             blur,
             search,
@@ -205,7 +230,9 @@ export default {
             handleCommand,
             toLogin,
             getBlogRecommend,
-            getEdit
+            getEdit,
+            cleanSearch,
+            addKeyWord
         };
     },
 };

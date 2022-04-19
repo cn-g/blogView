@@ -66,10 +66,10 @@ export default {
             if (res.errorCode == 200) { 
                 blogList.value = res.data;
                 query.pageTotal = res.total;
-                query.page = 1;
-                query.rows = 5;
+                // query.page = 1;
+                // query.rows = 5;
             } else {
-                ElMessage.warning(res.message);
+                //ElMessage.warning(res.message);
             }
          })
         };
@@ -83,7 +83,7 @@ export default {
                 if(res.errorCode == 200){
                     channelList.value = res.data;
                 }else{
-                    ElMessage.warning(res.message);
+                    //ElMessage.warning(res.message);
                 }
             })
         };
@@ -92,7 +92,7 @@ export default {
                 if(res.errorCode == 200){
                     categoryList.value = res.data;
                 }else{
-                    ElMessage.warning(res.message);
+                    //ElMessage.warning(res.message);
                 }
             })
         };
