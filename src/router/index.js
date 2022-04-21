@@ -18,12 +18,12 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
             }, {
-                path: "/account",
-                name: "account",
+                path: "/essaydesc",
+                name: "essaydesc",
                 meta: {
-                    title: '账号管理'
+                    title: '博客详情页'
                 },
-                component: () => import ( /* webpackChunkName: "table" */ "../views/user/Account.vue")
+                component: () => import ( /* webpackChunkName: "table" */ "../views/blog/EssayDesc.vue")
             },{
                 path: "/users",
                 name: "users",
@@ -32,33 +32,12 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/user/Users.vue")
             }, {
-                path: "/role",
-                name: "role",
-                meta: {
-                    title: '角色管理'
-                },
-                component: () => import ( /* webpackChunkName: "table" */ "../views/user/Role.vue")
-            }, {
-                path: "/url",
-                name: "url",
-                meta: {
-                    title: '接口管理'
-                },
-                component: () => import ( /* webpackChunkName: "table" */ "../views/user/Url.vue")
-            },{
                 path: "/operate",
                 name: "operate",
                 meta: {
                     title: '操作管理'
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/user/Operate.vue")
-            }, {
-                path: "/category",
-                name: "category",
-                meta: {
-                    title: '类目管理'
-                },
-                component: () => import ( /* webpackChunkName: "table" */ "../views/blog/Category.vue")
             }, {
                 path: "/essay",
                 name: "essay",
@@ -115,16 +94,16 @@ const routes = [
                     title: '个人中心'
                 },
                 component: () => import (/* webpackChunkName: "user" */ '../views/User.vue')
-            }, {
-                path: '/editor',
-                name: 'editor',
-                meta: {
-                    title: '富文本编辑器'
-                },
-                component: () => import (/* webpackChunkName: "editor" */ '../views/Editor.vue')
-            }
+            }, 
         ]
     }, {
+            path: '/editor',
+            name: 'editor',
+            meta: {
+                title: '富文本编辑器'
+            },
+            component: () => import (/* webpackChunkName: "editor" */ '../views/Editor.vue')
+    },{
         path: "/login",
         name: "Login",
         meta: {

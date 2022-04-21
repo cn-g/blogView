@@ -20,6 +20,9 @@ export const uploadImg = data => {
     return request({
         url: '/cloud/uploadImg',
         method: 'post',
+        headers:{
+            'Content-Type': 'multipart/form-data'
+        },
         data: data
     });
 };
@@ -87,7 +90,38 @@ export const cleanHistory = data => {
         data: data
     });
 };
-
+//前台查看博客详情
+export const getHomeEssayDec = query => {
+    return request({
+        url: '/web-reception/home/getEssayDec',
+        method: 'get',
+        params: query
+    });
+};
+//添加博客
+export const addEssay = data => {
+    return request({
+        url: '/web-admin/essay/addEssay',
+        method: 'post',
+        data: data
+    });
+};
+//发布评论
+export const addComment = data => {
+    return request({
+        url: '/web-reception/blog/addComment',
+        method: 'post',
+        data: data
+    });
+};
+//点赞，浏览等等
+export const addOperateHistory = data => {
+    return request({
+        url: '/web-reception/home/addOperateHistory',
+        method: 'post',
+        data: data
+    });
+};
 //账号
 export const getAccountPage = query => {
     return request({
@@ -174,129 +208,7 @@ export const getUserRecommendByUserId = query => {
         params: query
     });
 };
-//角色
-export const getRolePage = query => {
-    return request({
-        url: '/web-admin/role/getRolePage',
-        method: 'get',
-        params: query
-    });
-};
-export const addRole = data => {
-    return request({
-        url: '/web-admin/role/addRole',
-        method: 'post',
-        data: data
-    });
-};
-export const updateRole = data => {
-    return request({
-        url: '/web-admin/role/updateRole',
-        method: 'post',
-        data: data
-    });
-};
-export const deleteRole = data => {
-    return request({
-        url: '/web-admin/role/deleteRole',
-        method: 'post',
-        data: data
-    });
-};
-export const getRoleData = query => {
-    return request({
-        url: '/web-admin/role/getRoleData',
-        method: 'get',
-        params: query
-    });
-};
-//接口
-export const getUrlPage = query => {
-    return request({
-        url: '/web-admin/url/getUrlPage',
-        method: 'get',
-        params: query
-    });
-};
-export const addUrl = data => {
-    return request({
-        url: '/web-admin/url/addUrl',
-        method: 'post',
-        data: data
-    });
-};
-export const updateUrl = data => {
-    return request({
-        url: '/web-admin/url/updateUrl',
-        method: 'post',
-        data: data
-    });
-};
-export const deleteUrl = data => {
-    return request({
-        url: '/web-admin/url/deleteUrl',
-        method: 'post',
-        data: data
-    });
-};
-//操作
-export const getOperatePage = query => {
-    return request({
-        url: '/web-admin/operate/getOperatePage',
-        method: 'get',
-        params: query
-    });
-};
-export const addOperate = data => {
-    return request({
-        url: '/web-admin/operate/addOperate',
-        method: 'post',
-        data: data
-    });
-};
-export const updateOperate = data => {
-    return request({
-        url: '/web-admin/operate/updateOperate',
-        method: 'post',
-        data: data
-    });
-};
-export const deleteOperate = data => {
-    return request({
-        url: '/web-admin/operate/deleteOperate',
-        method: 'post',
-        data: data
-    });
-};
 //类目
-export const getCategoryPage = query => {
-    return request({
-        url: '/web-admin/category/getCategoryPage',
-        method: 'get',
-        params: query
-    });
-};
-export const addCategory = data => {
-    return request({
-        url: '/web-admin/category/addCategory',
-        method: 'post',
-        data: data
-    });
-};
-export const updateCategory = data => {
-    return request({
-        url: '/web-admin/category/updateCategory',
-        method: 'post',
-        data: data
-    });
-};
-export const deleteCategory = data => {
-    return request({
-        url: '/web-admin/category/deleteCategory',
-        method: 'post',
-        data: data
-    });
-};
 export const getCategoryData = query => {
     return request({
         url: '/web-admin/category/getCategoryData',
@@ -312,13 +224,7 @@ export const getEssayPage = query => {
         params: query
     });
 };
-export const addEssay = data => {
-    return request({
-        url: '/web-admin/essay/addEssay',
-        method: 'post',
-        data: data
-    });
-};
+
 export const updateEssay = data => {
     return request({
         url: '/web-admin/essay/updateEssay',

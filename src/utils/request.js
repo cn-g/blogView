@@ -31,6 +31,7 @@ service.interceptors.response.use(
             localStorage.removeItem("token");
             localStorage.removeItem("role_id");
             localStorage.removeItem("user_id");
+            localStorage.removeItem("pic_url");
             //router.go(0);
         } 
         else {

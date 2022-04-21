@@ -1,10 +1,10 @@
 <template>
     <div class="header">
         <!-- 折叠按钮 -->
-        <div class="collapse-btn" @click="collapseChage">
+        <div class="collapse-btn">
             <i class="el-icon-tickets"></i>
         </div>
-        <div class="logo">博客园</div>
+        <div class="logo" @click="collapseChage">博客园</div>
         <div class="header-midder" >
             <el-input placeholder="请输入内容"  @focus="search" @blur="blur" v-model="text.content" class="input-with-select" style="width:500px" >
                 <template #append>
@@ -58,6 +58,7 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item command="user">个人中心</el-dropdown-item>
+                            <el-dropdown-item command="editor">发布</el-dropdown-item>
                             <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -83,12 +84,31 @@
             </div>
         </el-card>
     </div>
+    <div class="blogdesc" v-if="blogEditVisible">
+        <el-card class="box-card" style="text-align:center">
+            <template #header class="clearfix">
+                <!-- <el-image :src="essay.userPicUrl"></el-image> -->
+                <img :src="essay.userPicUrl" style="width: 60px;height: 60px;border-radius: 50%;" alt />
+                <!-- <div style="margin:0 auto;">{{ essay.name }}</div> -->
+            </template>
+            <div class="text item">
+                {{ essay.name }} 
+                <span style="margin-left:20px">性别：{{ sexData[essay.sex] }}</span>
+            </div>
+            <div class="text item">
+                出生日期：{{ essay.birthday }} 
+            </div>
+            <div class="text item">
+                简介：{{ essay.userSynopsis }} 
+            </div>
+        </el-card>
+    </div>
 </template>
 <script>
 import { computed, onMounted, reactive,ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { getAccount,getHomeRecommendList,getHomeUserRecommendList,getHomeSearchList,getHomeHistoryList,cleanHistory } from "../api/index";
+import { getAccount,getHomeRecommendList,getHomeUserRecommendList,getHomeSearchList,getHomeHistoryList,cleanHistory,getHomeEssayDec } from "../api/index";
 import { ElMessage } from 'element-plus';
 export default {
     setup() {
@@ -126,12 +146,39 @@ export default {
             id:"",
         });
         const editVisible = ref(false);
+        const blogEditVisible = ref(false);
         const getEdit = ()=>{
+            console.log(router);
             if(router.currentRoute.value.name == 'dashboard'){
                 editVisible.value = true;
                 getBlogRecommend();
             }
-        } 
+            if(router.currentRoute.value.name == 'essaydesc'){
+                blogEditVisible.value = true;
+                getBlogUserDesc();
+            }
+        }
+        const blogId = router.currentRoute.value.query.blogId;
+        let idReqDto = reactive({
+            id:null,
+        });
+        const essay = ref([]);
+        const getBlogUserDesc = ()=>{
+            //获取博客id
+            idReqDto.id = blogId;
+            getHomeEssayDec(idReqDto).then((res)=>{
+                if(res.errorCode === 200){
+                    essay.value = res.data;
+                }else{
+                    ElMessage.warning(res.message);
+                }
+            });
+        };
+        const sexData = reactive({
+            '1':'男',
+            '2':'女',
+            '3':'未知'
+        });
         const blogRecommendList = ref([]);
         const userRecommendList = ref([]);
         const getBlogRecommend = ()=>{
@@ -177,8 +224,7 @@ export default {
                     if(res.errorCode == 200){
                         userInfo.account = res.data.account;
                         userInfo.picUrl = res.data.picUrl;
-                    }else{
-                        //ElMessage.warning("获取用户信息失败");
+                        localStorage.setItem("pic_url",res.data.picUrl);
                     }
                 });
             }
@@ -203,13 +249,18 @@ export default {
                 localStorage.removeItem("token");
                 localStorage.removeItem("role_id");
                 localStorage.removeItem("user_id");
+                localStorage.removeItem("pic_url");
                 router.push("/login");
             } else if (command == "user") {
                 router.push("/user");
+            }else if(command == "editor"){
+                router.push("/editor");
             }
         };
 
         return {
+            idReqDto,
+            essay,
             text,
             userInfo,
             userId,
@@ -218,10 +269,12 @@ export default {
             blogRecommendList,
             userRecommendList,
             editVisible,
+            blogEditVisible,
             isSearch,
             searchList,
             userSearchList,
             showHistory,
+            sexData,
             getSearchList,
             blur,
             search,
@@ -232,7 +285,8 @@ export default {
             getBlogRecommend,
             getEdit,
             cleanSearch,
-            addKeyWord
+            addKeyWord,
+            getBlogUserDesc
         };
     },
 };
@@ -252,15 +306,20 @@ export default {
     position: absolute;
     right: 21%;
 }
+.blogdesc{
+    width: 300px;
+    position: absolute;
+    left: 21%;
+}
 .collapse-btn {
     float: left;
     padding: 0 21px;
-    cursor: pointer;
     line-height: 70px;
 }
 .header .logo {
     float: left;
     width: 250px;
+    cursor: pointer;
     line-height: 70px;
 }
 .header-right {

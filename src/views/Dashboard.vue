@@ -66,10 +66,6 @@ export default {
             if (res.errorCode == 200) { 
                 blogList.value = res.data;
                 query.pageTotal = res.total;
-                // query.page = 1;
-                // query.rows = 5;
-            } else {
-                //ElMessage.warning(res.message);
             }
          })
         };
@@ -82,8 +78,6 @@ export default {
             getHomeChannel().then((res)=>{
                 if(res.errorCode == 200){
                     channelList.value = res.data;
-                }else{
-                    //ElMessage.warning(res.message);
                 }
             })
         };
@@ -91,8 +85,6 @@ export default {
             getHomeCategory().then((res)=>{
                 if(res.errorCode == 200){
                     categoryList.value = res.data;
-                }else{
-                    //ElMessage.warning(res.message);
                 }
             })
         };
@@ -100,8 +92,7 @@ export default {
             router.push("/login");
         };
         const getBlog = (id)=>{
-            console.log(id);
-            localStorage.setItem("blog_id", id);
+            router.push({path:'/essaydesc',query:{blogId:id}});
         };
         getCategory();
         getChannel();
