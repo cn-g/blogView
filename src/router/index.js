@@ -25,6 +25,20 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/blog/EssayDesc.vue")
             },{
+                path: "/essayuserdesc",
+                name: "essayuserdesc",
+                meta: {
+                    title: '博主详情页'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/blog/EssayUserDesc.vue")
+            },{
+                path: "/searchessay",
+                name: "searchessay",
+                meta: {
+                    title: '博客搜索页'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/blog/SearchEssay.vue")
+            },{
                 path: "/users",
                 name: "users",
                 meta: {

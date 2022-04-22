@@ -8,7 +8,7 @@
         <div class="header-midder" >
             <el-input placeholder="请输入内容"  @focus="search" @blur="blur" v-model="text.content" class="input-with-select" style="width:500px" >
                 <template #append>
-                    <el-button icon="el-icon-search"></el-button>
+                    <el-button icon="el-icon-search" @click="toSearchBlog(text.content)"></el-button>
                 </template>
             </el-input>
             <el-card v-if="isSearch" style="position:relative;z-index:8;line-height: normal;
@@ -72,7 +72,15 @@
                 <span>热门博客榜单</span>
             </template>
             <div v-for="blog in blogRecommendList" :key="blog.id" class="text item">
-                {{blog.blogTitle}}
+                <el-row @click="getBlog(blog.blogId)" style="cursor: pointer;">
+                        <el-col :span="16">
+                            <span>{{blog.blogTitle}}</span>
+                        </el-col>
+                        <el-col :span="8" style="color:#999AAA;font-size: 13px;">
+                            <span>{{blog.blogUserName}}</span>
+                        </el-col>
+                </el-row>
+                
             </div>
         </el-card>
         <el-card class="box-card">
@@ -80,7 +88,15 @@
                 <span>热门博主榜单</span>
             </template>
             <div v-for="user in userRecommendList" :key="user.id" class="text item">
-                {{ user.blogUserName }}
+                <el-row @click="toEssayUser(user.blogUserId)" style="cursor: pointer;">
+                        <el-col :span="16">
+                            <img :src="user.blogUserPic" style="width: 40px;height: 40px;border-radius: 50%;" alt />
+                        </el-col>
+                        <el-col :span="8" style="color:#999AAA;font-size: 13px;margin: auto;">
+                            <span>{{ user.blogUserName }}</span>
+                        </el-col>
+                </el-row>
+                
             </div>
         </el-card>
     </div>
@@ -88,7 +104,7 @@
         <el-card class="box-card" style="text-align:center">
             <template #header class="clearfix">
                 <!-- <el-image :src="essay.userPicUrl"></el-image> -->
-                <img :src="essay.userPicUrl" style="width: 60px;height: 60px;border-radius: 50%;" alt />
+                <img :src="essay.userPicUrl" style="width: 60px;height: 60px;border-radius: 50%;" alt @click="toEssayUser(essay.userId)" />
                 <!-- <div style="margin:0 auto;">{{ essay.name }}</div> -->
             </template>
             <div class="text item">
@@ -108,7 +124,7 @@
 import { computed, onMounted, reactive,ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { getAccount,getHomeRecommendList,getHomeUserRecommendList,getHomeSearchList,getHomeHistoryList,cleanHistory,getHomeEssayDec } from "../api/index";
+import { getAccount,getHomeRecommendList,getHomeUserRecommendList,getHomeSearchList,getHomeHistoryList,cleanHistory,getHomeEssayDec,addHistory } from "../api/index";
 import { ElMessage } from 'element-plus';
 export default {
     setup() {
@@ -208,14 +224,18 @@ export default {
                 }
             });
             if(userId != null){
-                getHomeHistoryList().then((res)=>{
+                getHistory();
+            }
+        };
+        const getHistory = ()=>{
+            getHomeHistoryList().then((res)=>{
                     if(res.errorCode == 200){
+                        showHistory.value = true;
                         userSearchList.value = res.data;
                     }else{
                         showHistory.value = false;
                     }
                 });
-            }
         };
         const getUser = ()=>{
             if(userId != null){
@@ -238,6 +258,29 @@ export default {
         };
         const addKeyWord = (keyWord)=>{
             text.content = keyWord;
+        };
+        const toEssayUser = (id)=>{
+            router.push({path:"/essayuserdesc",query:{blogUserId:id}});
+        };
+        const getBlog = (id)=>{
+            router.push({path:'/essaydesc',query:{blogId:id}});
+        };
+        const addform = reactive({
+            keyWord:null,
+            blogUserId:null,
+            status:1
+        });
+        const toSearchBlog = (content)=>{
+            addform.keyWord = content;
+            addform.blogUserId = userId;
+            if(userId != null){
+                addHistory(addform).then(res=>{
+                if(res.errorCode === 200){
+                    getHistory();
+                }
+            });
+            }
+            router.push({path:"/searchessay",query:{keyWord:content}});
         };
         getUser();
         getEdit();
@@ -286,7 +329,11 @@ export default {
             getEdit,
             cleanSearch,
             addKeyWord,
-            getBlogUserDesc
+            getBlogUserDesc,
+            toEssayUser,
+            toSearchBlog,
+            getHistory,
+            getBlog
         };
     },
 };

@@ -250,11 +250,10 @@ export default {
             weChat:null,
         });
         //上传图片
-        const uploadUrl = "http://localhost:8080/api/cloud/uploadImg";
+        const uploadUrl = "http://localhost:7089/cloud/uploadImg";
         const uploadSuccess = (res)=>{
             userInfo.picUrl = res.data;
-            userform.id = localStorage.getItem("userId");
-            userform.picUrl = res.data;
+            userform.id = localStorage.getItem("user_id");
             updateUser(userform).then((res)=>{
                 if(res.errorCode == 200){
                     router.go(0);
@@ -271,7 +270,7 @@ export default {
         const accountAditStatus = ref(false);
         const userAditStatus = ref(false);
         const getUserInfo = ()=>{
-            idData.id = localStorage.getItem("userId");
+            idData.id = localStorage.getItem("user_id");
             getAccount(idData).then((res)=>{
                 if(res.errorCode == 200){
                     accountform.id = res.data.id;
@@ -357,6 +356,8 @@ export default {
                             setTimeout(function(){
                                 localStorage.removeItem("token");
                                 localStorage.removeItem("role_id");
+                                localStorage.removeItem("pic_url");
+                                localStorage.removeItem("user_id");
                                 router.push("/login");
                             },2000);
                         }
@@ -482,7 +483,7 @@ export default {
     margin: auto;
 }
 :deep(.el-card){
-    width: 40%;
+    width: 95%;
 }
 :deep(.el-row){
     margin-top: 10px;

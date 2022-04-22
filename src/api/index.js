@@ -98,6 +98,14 @@ export const getHomeEssayDec = query => {
         params: query
     });
 };
+//前台查看博主详情
+export const getHomeUserDec = query => {
+    return request({
+        url: '/web-reception/home/getUserDec',
+        method: 'get',
+        params: query
+    });
+};
 //添加博客
 export const addEssay = data => {
     return request({
@@ -120,6 +128,22 @@ export const addOperateHistory = data => {
         url: '/web-reception/home/addOperateHistory',
         method: 'post',
         data: data
+    });
+};
+//查看评论
+export const getCommentPage = query => {
+    return request({
+        url: '/web-reception/home/getCommentPage',
+        method: 'get',
+        params: query
+    });
+};
+//搜索接口
+export const getEssayPageByKeyWord = query => {
+    return request({
+        url: '/web-reception/home/searchEssay',
+        method: 'get',
+        params: query
     });
 };
 //账号

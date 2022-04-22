@@ -13,18 +13,44 @@
         </el-carousel>
     </div>
     <div class="category">
-        <el-button type="text" @click="toMore" style="color:#303133;margin-left: 94%;">更多<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+        <el-button type="text" @click="toSearchBlog(null)" style="color:#303133;margin-left: 94%;">更多<i class="el-icon-arrow-right el-icon--right"></i></el-button>
         <el-tabs type="border-card" v-model="query.active" @tab-click="getList">
             <el-tab-pane v-for="cate in categoryList" :key="cate.id" :label="cate.name" :name="cate.id">
                 <div class="blog">
                     <el-card class="box-card" v-for="blog in blogList"
                         :key="blog.id" shadow="never" @click="getBlog(blog.id)" style="cursor: pointer;">
-                        <template #header class="clearfix">
-                            <span>{{ blog.title }}</span>
-                        </template>
-                        <div class="text item">
-                            {{ blog.synopsis }}
-                        </div>
+                <div class="text item" style="color:#999AAA;">
+                    <el-row>
+                        <el-col :span="8">
+                            <span><img :src="blog.picUrl" style="width: 100%;height: 100%;" alt /></span>
+                        </el-col>
+                        <el-col :span="16">
+                            <el-row style="margin-left:10px">
+                                <el-col :span="9">
+                                    <div class="grid-content bg-purple" style="margin:auto;color:#000;font-size:16px">
+                                        <span>{{ blog.title }}</span>
+                                    </div>
+                                </el-col>
+                                <el-col :span="9" style="margin: auto;">
+                                    <span style="color:#999AAA;">{{ blog.publishTime }}</span>
+                                </el-col>
+                                <el-col :span="3" style="margin: auto;">
+                                    <span ><i class="el-icon-view" style="color:#999AAA;">{{ blog.viewNumber }}</i></span>
+                                </el-col>
+                                <el-col :span="3" style="margin: auto;">
+                                    <i class="el-icon-thumb" style="color:#999AAA;">{{ blog.goodNumber }}</i>
+                                </el-col>
+                            </el-row>
+                            <el-row style="height:100%">
+                                <el-col :span="12" >
+                                    <div class="grid-content bg-purple" style="margin-left:10px;margin-top: 20px;">
+                                       <span style="color:#999AAA;">{{ blog.synopsis }}</span>
+                                    </div>
+                                </el-col>
+                            </el-row>
+                            </el-col>
+                        </el-row>
+                </div>
                     </el-card>
                     <div class="pagination">
                         <el-pagination background layout="prev, next" :current-page="query.page"
@@ -88,11 +114,11 @@ export default {
                 }
             })
         };
-        const toMore = ()=>{
-            router.push("/login");
-        };
         const getBlog = (id)=>{
             router.push({path:'/essaydesc',query:{blogId:id}});
+        };
+        const toSearchBlog = (content)=>{
+            router.push({path:"/searchessay",query:{keyWord:content}});
         };
         getCategory();
         getChannel();
@@ -106,8 +132,8 @@ export default {
             handlePageChange,
             getChannel,
             getCategory,
-            toMore,
-            getBlog
+            getBlog,
+            toSearchBlog
         };
     },
 };
