@@ -21,7 +21,9 @@
                 </div>
             </el-affix>
             <div class="container">
-            <div class="mgb20" ref='editor'></div>
+            <div class="mgb20" ref='editor' >
+                <div v-html="content.html"></div>
+            </div>
             </div>
             <!-- 编辑弹出框 -->
         <el-dialog title="发布" v-model="editVisible" width="20%">
@@ -65,7 +67,7 @@
 <script>
 import WangEditor from "wangEditor";
 import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
-import { addEssay,getCategoryData } from '../api';
+import { addEssay,getCategoryData,getEssay } from '../api';
 import { ElMessage } from 'element-plus';
 import { useRouter } from "vue-router";
 export default {
@@ -78,6 +80,7 @@ export default {
             text:'',
             html:''
         });
+        const userId = localStorage.getItem("user_id");
         const toHome = ()=>{
             router.push("/dashboard");
         };
@@ -120,7 +123,24 @@ export default {
             title:null,
             userId:null
         });
+        const blogId = router.currentRoute.value.query.blogId;
         //保存为草稿
+        const idReqDto = reactive({
+            id:null,
+        });
+        const insertContent = ()=>{
+            if(blogId){
+                idReqDto.id = blogId;
+                getEssay(idReqDto).then(res=>{
+                    if(res.errorCode === 200){
+                        content.title = res.data.title;
+                        content.html = res.data.content;
+                        editInstance.txt.html() = content.html;
+                    }
+                })
+            }
+        };
+        insertContent();
         const addDraft = () => {
             content.html = editInstance.txt.html();
             addform.userId = localStorage.getItem("user_id");
@@ -128,10 +148,12 @@ export default {
             addform.status = 1;
             addform.content = content.html;
             addform.title = content.title;
+            addform.id = blogId;
             addEssay(addform).then((res)=>{
                 if(res.errorCode === 200){
                     addform.id = res.data;
                     ElMessage.success("保存成功");
+                    router.push({path:"/essayuser",query:{blogUserId:userId}});
                 }
             });
         };
@@ -146,9 +168,7 @@ export default {
                 if(res.errorCode === 200){
                     editVisible.value = false;
                     ElMessage.success("发布成功");
-                    setTimeout(function(){
-                        router.push("/dashboard")
-                    },1000);
+                    router.push({path:"/essayuser",query:{blogUserId:userId}})
                 }else{
                     ElMessage.warning("发布失败");
                 }
@@ -165,7 +185,8 @@ export default {
             uploadSuccess,
             editVisible,
             selectCategoryDate,
-            selectDate
+            selectDate,
+            insertContent
         };
     },
 };

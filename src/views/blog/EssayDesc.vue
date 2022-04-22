@@ -55,7 +55,7 @@
             <el-button type="text" @click="tologin()">登录才能评论</el-button>
         </div>
         <div class="comment-list">
-            <el-divider></el-divider>
+            <el-divider style="height: 1px;"></el-divider>
             <div v-for="(item,i) in commentList" :key="i">
                 <div class="author-info">
                     <span style="color:#BB9444;margin-right:10px;">{{ item.name }}</span>
@@ -67,7 +67,7 @@
                         {{item.comment}}
                     </p>
                 </div>
-                <el-divider></el-divider>
+                <el-divider style="height: 1px;"></el-divider>
             </div>
             <div class="pagination">
                 <el-pagination background layout="prev, next" :current-page="query.page"

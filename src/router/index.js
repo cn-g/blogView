@@ -108,7 +108,14 @@ const routes = [
                     title: '个人中心'
                 },
                 component: () => import (/* webpackChunkName: "user" */ '../views/User.vue')
-            }, 
+            }, {
+                path: '/essayuser',
+                name: 'essayuser',
+                meta: {
+                    title: '博客中心'
+                },
+                component: () => import (/* webpackChunkName: "user" */ '../views/blog/EssayUser.vue')
+            },
         ]
     }, {
             path: '/editor',
@@ -143,7 +150,7 @@ router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | 博客园`;
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role_id');
-    if (token == null && role==null && to.path == '/user') {
+    if (token == null && role==null && (to.path == '/user' || to.path == '/editor' || to.path == '/essayuser')) {
         next('/login');
     } else {
         next();

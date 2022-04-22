@@ -57,8 +57,9 @@
                     </span>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item command="user">个人中心</el-dropdown-item>
                             <el-dropdown-item command="editor">发布</el-dropdown-item>
+                            <el-dropdown-item command="user">个人中心</el-dropdown-item>
+                            <el-dropdown-item command="essayuser">博客中心</el-dropdown-item>
                             <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -88,7 +89,7 @@
                 <span>热门博主榜单</span>
             </template>
             <div v-for="user in userRecommendList" :key="user.id" class="text item">
-                <el-row @click="toEssayUser(user.blogUserId)" style="cursor: pointer;">
+                <el-row @click="toEssayUserDesc(user.blogUserId)" style="cursor: pointer;">
                         <el-col :span="16">
                             <img :src="user.blogUserPic" style="width: 40px;height: 40px;border-radius: 50%;" alt />
                         </el-col>
@@ -104,7 +105,7 @@
         <el-card class="box-card" style="text-align:center">
             <template #header class="clearfix">
                 <!-- <el-image :src="essay.userPicUrl"></el-image> -->
-                <img :src="essay.userPicUrl" style="width: 60px;height: 60px;border-radius: 50%;" alt @click="toEssayUser(essay.userId)" />
+                <img :src="essay.userPicUrl" style="width: 60px;height: 60px;border-radius: 50%;cursor: pointer;" alt @click="toEssayUser(essay.userId)"  />
                 <!-- <div style="margin:0 auto;">{{ essay.name }}</div> -->
             </template>
             <div class="text item">
@@ -259,7 +260,7 @@ export default {
         const addKeyWord = (keyWord)=>{
             text.content = keyWord;
         };
-        const toEssayUser = (id)=>{
+        const toEssayUserDesc = (id)=>{
             router.push({path:"/essayuserdesc",query:{blogUserId:id}});
         };
         const getBlog = (id)=>{
@@ -298,6 +299,8 @@ export default {
                 router.push("/user");
             }else if(command == "editor"){
                 router.push("/editor");
+            }else if(command == "essayuser"){
+                router.push({path:"/essayuser",query:{blogUserId:userId}});
             }
         };
 
@@ -330,10 +333,10 @@ export default {
             cleanSearch,
             addKeyWord,
             getBlogUserDesc,
-            toEssayUser,
             toSearchBlog,
             getHistory,
-            getBlog
+            getBlog,
+            toEssayUserDesc
         };
     },
 };

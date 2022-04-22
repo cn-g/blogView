@@ -146,6 +146,14 @@ export const getEssayPageByKeyWord = query => {
         params: query
     });
 };
+//获取用户所有博客
+export const getUserAllEssay = query => {
+    return request({
+        url: '/web-reception/blog/getUserAllEssay',
+        method: 'get',
+        params: query
+    });
+};
 //账号
 export const getAccountPage = query => {
     return request({

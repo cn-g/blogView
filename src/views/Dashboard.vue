@@ -92,6 +92,8 @@ export default {
             if (res.errorCode == 200) { 
                 blogList.value = res.data;
                 query.pageTotal = res.total;
+            }else{
+                blogList.value = null;
             }
          })
         };
